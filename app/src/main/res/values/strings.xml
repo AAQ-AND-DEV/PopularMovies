@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Movies</string>
+    <string name="no_movies">No movies available!</string>
+    <string name="released">Released: </string>
+    <string name="rating">Viewer rating: </string>
+
+    <string name="highest_rated">Highest Rated</string>
+    <string name="most_popular">Most Popular </string>
+</resources>
