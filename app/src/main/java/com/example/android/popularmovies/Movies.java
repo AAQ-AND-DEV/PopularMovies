@@ -1,12 +1,25 @@
 package com.example.android.popularmovies;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Movies {
 
+    @SerializedName("poster_path")
     private String mPoster;
+
+    @SerializedName("backdrop_path")
     private String mBackdrop;
+
+    @SerializedName("original_title")
     private String mTitle;
+
+    @SerializedName("vote_average")
     private String mRating;
+
+    @SerializedName("release_date")
     private String mReleaseDate;
+
+    @SerializedName("overview")
     private String mSynopsis;
 
     public Movies(){
