@@ -43,18 +43,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Data to populate the RecyclerView with
-        // this needs to come from the json eventually
-        /*mArrayList = new ArrayList<>();
-        mArrayList.add(R.drawable.sample_0);
-        mArrayList.add(R.drawable.sample_1);
-        mArrayList.add(R.drawable.sample_2);
-        mArrayList.add(R.drawable.sample_3);
-        mArrayList.add(R.drawable.sample_4);
-        mArrayList.add(R.drawable.sample_5);
-        mArrayList.add(R.drawable.sample_6);
-        mArrayList.add(R.drawable.sample_7);*/
-
         // Find RecyclerView
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -87,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
             loaderManager.initLoader(MOVIE_LOADER_0, null, this);
-            loaderManager.initLoader(MOVIE_LOADER_1, null, this);
             mEmptyView.setVisibility(View.GONE);
         } else {
             // Otherwise, display error
@@ -112,19 +99,21 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.highest_rated_item:
+
                 LoaderManager loaderManager = getLoaderManager();
                 loaderManager.initLoader(MOVIE_LOADER_0, null, this);
                 Toast toast = Toast.makeText(this, "You clicked highest rated", Toast.LENGTH_SHORT);
                 toast.show();
-                //newGame();
                 return true;
+
             case R.id.most_popular_item:
+
                 LoaderManager loaderManager2 = getLoaderManager();
                 loaderManager2.initLoader(MOVIE_LOADER_1, null, this);
                 Toast toast2 = Toast.makeText(this, "You clicked most popular", Toast.LENGTH_SHORT);
                 toast2.show();
-                //showHelp();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -132,13 +121,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public Loader<List<Movies>> onCreateLoader(int id, Bundle bundle) {
-
-        if (id == 0) {
-            MoviesLoader movies = new MoviesLoader(this, MOVIE_REQUEST_URL);
-        } else {
-            MoviesLoader movies = new MoviesLoader(this, MOVIE_HIGH_RATED_URL);
-        }
-        // Create a new loader for the given URL
+        MoviesLoader movies = new MoviesLoader(this, MOVIE_REQUEST_URL);
         return movies;
     }
 
@@ -170,14 +153,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             default:
                 break;
         }
-
-        // If there is a valid list of {@link Movies}, then add them to the adapter's
-        // data set. This will trigger the RecyclerView to update.
-        /*if (movies != null && !movies.isEmpty()) {
-            mMoviesList.addAll(movies);
-        } else {
-            mEmptyView.setVisibility(View.VISIBLE);
-        }*/
 
         mAdapter.notifyDataSetChanged();
     }
