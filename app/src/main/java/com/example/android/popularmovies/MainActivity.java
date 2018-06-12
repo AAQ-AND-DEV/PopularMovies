@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,13 +32,14 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     private List<Movies> mMoviesList;
     private static final int MOVIE_LOADER_0 = 0;
     private static final int MOVIE_LOADER_1 = 1;
+    android.support.v4.app.LoaderManager.LoaderCallbacks<Movies> myLoaderCallbacks;
 
     // URL to query the movie database
     private static final String MOVIE_REQUEST_URL =
-            "[popularEndPoint]";
+            "http://api.themoviedb.org/3/movie/popular?&api_key=36bfad9d0ba02dad9b3c2c167b27d286";
 
     private static final String MOVIE_HIGH_RATED_URL =
-            "[top_ratedEndPoint]";
+            "https://api.themoviedb.org/3/movie/top_rated?&api_key=36bfad9d0ba02dad9b3c2c167b27d286";
 
 
     @Override
@@ -101,17 +103,26 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.highest_rated_item:
-
-                LoaderManager loaderManager = getLoaderManager();
-                loaderManager.initLoader(MOVIE_LOADER_0, null, this);
-                Toast toast = Toast.makeText(this, "You clicked highest rated", Toast.LENGTH_SHORT);
-                toast.show();
+                item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        getSupportLoaderManager().restartLoader(MOVIE_LOADER_1, null, myLoaderCallbacks);
+                        return true;
+                    }
+                });
+                new MoviesLoader(this, MOVIE_HIGH_RATED_URL);
                 return true;
 
             case R.id.most_popular_item:
 
-                LoaderManager loaderManager2 = getLoaderManager();
-                loaderManager2.initLoader(MOVIE_LOADER_1, null, this);
+                item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        getSupportLoaderManager().restartLoader(MOVIE_LOADER_1, null, myLoaderCallbacks);
+                        return true;
+                    }
+                });
+                new MoviesLoader(this, MOVIE_REQUEST_URL);
                 Toast toast2 = Toast.makeText(this, "You clicked most popular", Toast.LENGTH_SHORT);
                 toast2.show();
                 return true;
@@ -133,6 +144,12 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         // Hide loading indicator because the data has been loaded
         View loadingIndicator = findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
+
+        if (movies != null && !movies.isEmpty()) {
+            mMoviesList.addAll(movies);
+        } else {
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
 
         // Set empty state text to display "No movies available!"
         mEmptyView.setText(R.string.no_movies);
