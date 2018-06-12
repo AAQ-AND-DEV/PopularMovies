@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     android.support.v4.app.LoaderManager.LoaderCallbacks<Movies> myLoaderCallbacks;
 
     // URL to query the movie database
-    private static final String MOVIE_REQUEST_URL =
+    private static final String MOVIE_MOST_POPULAR_URL =
             "http://api.themoviedb.org/3/movie/popular?&api_key=36bfad9d0ba02dad9b3c2c167b27d286";
 
     private static final String MOVIE_HIGH_RATED_URL =
@@ -78,7 +77,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(MOVIE_LOADER_0, null, this);
+            loaderManager.initLoader(0, null, this);
+            loaderManager.initLoader(1, null, this);
             mEmptyView.setVisibility(View.GONE);
         } else {
             // Otherwise, display error
@@ -100,32 +100,27 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.highest_rated_item:
                 item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        getSupportLoaderManager().restartLoader(MOVIE_LOADER_1, null, myLoaderCallbacks);
+                        getSupportLoaderManager().restartLoader(1, null, myLoaderCallbacks);
                         return true;
                     }
                 });
-                new MoviesLoader(this, MOVIE_HIGH_RATED_URL);
-                return true;
 
             case R.id.most_popular_item:
 
                 item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        getSupportLoaderManager().restartLoader(MOVIE_LOADER_1, null, myLoaderCallbacks);
+                        getSupportLoaderManager().restartLoader(0, null, myLoaderCallbacks);
                         return true;
                     }
                 });
-                new MoviesLoader(this, MOVIE_REQUEST_URL);
-                Toast toast2 = Toast.makeText(this, "You clicked most popular", Toast.LENGTH_SHORT);
-                toast2.show();
-                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -134,7 +129,9 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public Loader<List<Movies>> onCreateLoader(int id, Bundle bundle) {
-        MoviesLoader movies = new MoviesLoader(this, MOVIE_REQUEST_URL);
+
+        MoviesLoader movies = null;
+        movies = new MoviesLoader(this, MOVIE_MOST_POPULAR_URL);
         return movies;
     }
 
