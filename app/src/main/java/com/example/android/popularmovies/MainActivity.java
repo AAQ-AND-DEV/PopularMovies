@@ -22,6 +22,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<Movies>>, MoviesAdapter.ListItemClickListener {
 
+    private final String TAG = MainActivity.class.getSimpleName();
+
     private TextView mEmptyView;
     RecyclerView mRecyclerView;
     MoviesAdapter mAdapter;
@@ -134,25 +136,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
         // Set empty state text to display "No movies available!"
         mEmptyView.setText(R.string.no_movies);
-
-        switch (loader.getId()) {
-            case 0:
-                if (movies != null && !movies.isEmpty()) {
-                    mMoviesList.addAll(movies);
-                } else {
-                    mEmptyView.setVisibility(View.VISIBLE);
-                }
-                break;
-            case 1:
-                if (movies != null && !movies.isEmpty()) {
-                    mMoviesList.addAll(movies);
-                } else {
-                    mEmptyView.setVisibility(View.VISIBLE);
-                }
-                break;
-            default:
-                break;
-        }
 
         mAdapter.notifyDataSetChanged();
     }
