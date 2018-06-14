@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
             loaderManager.initLoader(MOVIE_LOADER_0, null, this);
-            loaderManager.initLoader(1, null, this);
+            loaderManager.initLoader(MOVIE_LOADER_1, null, this);
             mEmptyView.setVisibility(View.GONE);
         } else {
             // Otherwise, display error
