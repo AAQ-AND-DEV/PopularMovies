@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(0, null, this);
+            loaderManager.initLoader(MOVIE_LOADER_0, null, this);
             loaderManager.initLoader(1, null, this);
             mEmptyView.setVisibility(View.GONE);
         } else {
@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //int id = item.getItemId();
 
         // Handle item selection
         switch (item.getItemId()) {
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
                 item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        getSupportLoaderManager().restartLoader(1, null, myLoaderCallbacks);
+                        getSupportLoaderManager().restartLoader(MOVIE_LOADER_1, null, myLoaderCallbacks);
                         return true;
                     }
                 });
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
                 item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        getSupportLoaderManager().restartLoader(0, null, myLoaderCallbacks);
+                        getSupportLoaderManager().restartLoader(MOVIE_LOADER_0, null, myLoaderCallbacks);
                         return true;
                     }
                 });
@@ -161,8 +162,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        /*String toastMessage = "Item #" + clickedItemIndex + " clicked.";
-        Toast toast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
-        toast.show();*/
+        // do nothing? Handled by Adapter.
     }
 }
