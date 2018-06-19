@@ -3,43 +3,44 @@ package com.example.android.popularmovies;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<Movies>>, MoviesAdapter.ListItemClickListener {
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<Movies>>, MoviesAdapter.ListItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final String TAG = MainActivity.class.getSimpleName();
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private TextView mEmptyView;
     RecyclerView mRecyclerView;
     MoviesAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
     private List<Movies> mMoviesList;
-    private static final int MOVIE_LOADER_0 = 0;
-    private static final int MOVIE_LOADER_1 = 1;
+    private static final int MOVIE_LOADER_ID = 0;
     android.support.v4.app.LoaderManager.LoaderCallbacks<Movies> myLoaderCallbacks;
+    private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
 
     // URL to query the movie database
     private static final String MOVIE_MOST_POPULAR_URL =
-            "[most popular endpoint]";
+            "https://api.themoviedb.org/3/movie/popular?&api_key=36bfad9d0ba02dad9b3c2c167b27d286";
 
-    private static final String MOVIE_HIGH_RATED_URL =
-            "[highest-rated endpoint]";
-
+    private static final String MOVIE_HIGH_RATED_URL = "https://api.themoviedb.org/3/movie/top_rated?&api_key=36bfad9d0ba02dad9b3c2c167b27d286";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(MOVIE_LOADER_0, null, this);
-            loaderManager.initLoader(1, null, this);
+            //loaderManager.initLoader(MOVIE_LOADER_0, null, this);
+            loaderManager.initLoader(MOVIE_LOADER_ID, null, this);
             mEmptyView.setVisibility(View.GONE);
         } else {
             // Otherwise, display error
@@ -89,6 +90,14 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             mRecyclerView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
         }
+
+        Log.d(LOG_TAG, "onCreate: registering preference changed listener");
+
+        // good to know:
+        // Register MainActivity as an OnPreferenceChangedListener to receive a callback when a
+        // SharedPreference has changed. Please note that we must unregister MainActivity as an
+        // OnSharedPreferenceChanged listener in onDestroy to avoid any memory leaks.
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -100,39 +109,19 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //int id = item.getItemId();
-
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.highest_rated_item:
-                item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        getSupportLoaderManager().restartLoader(MOVIE_LOADER_1, null, myLoaderCallbacks);
-                        return true;
-                    }
-                });
-
-            case R.id.most_popular_item:
-
-                item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        getSupportLoaderManager().restartLoader(MOVIE_LOADER_0, null, myLoaderCallbacks);
-                        return true;
-                    }
-                });
-
-            default:
-                return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public Loader<List<Movies>> onCreateLoader(int id, Bundle bundle) {
 
-        MoviesLoader movies = null;
-        movies = new MoviesLoader(this, MOVIE_MOST_POPULAR_URL);
+        MoviesLoader movies = new MoviesLoader(this, MOVIE_MOST_POPULAR_URL, MOVIE_HIGH_RATED_URL);
         return movies;
     }
 
@@ -156,6 +145,25 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        // If the preferences for sort order have changed since the user was last in MainActivity,
+        // perform a new query and set the flag to false
+        if (PREFERENCES_HAVE_BEEN_UPDATED) {
+            Log.d(LOG_TAG, "onStart: preferences were updated");
+            getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, myLoaderCallbacks);
+            PREFERENCES_HAVE_BEEN_UPDATED = false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister MainActivity as an OnPreferenceChangedListener to avoid any memory leaks.
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
     public void onLoaderReset(Loader<List<Movies>> loader) {
         mMoviesList.clear();
     }
@@ -163,5 +171,11 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     @Override
     public void onListItemClick(int clickedItemIndex) {
         // do nothing? Handled by Adapter.
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        // Set this flag to true so that when control returns to MainActivity, it can refresh the data.
+        PREFERENCES_HAVE_BEEN_UPDATED = true;
     }
 }

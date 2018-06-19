@@ -82,4 +82,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         mMovie = mMoviesList.get(position);
         Picasso.get().load("http://image.tmdb.org/t/p/w342/" + mMovie.getPoster()).into(holder.mImageView);
     }
+
+    public void setMovieData(List<Movies> movieData) {
+        mMoviesList = movieData;
+        notifyDataSetChanged();
+    }
 }

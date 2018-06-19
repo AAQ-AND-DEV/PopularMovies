@@ -20,6 +20,7 @@ import java.util.List;
 
 public class Utils {
 
+
     public static final String LOG_TAG = Utils.class.getName();
 
     private Utils() {
@@ -41,7 +42,7 @@ public class Utils {
     }
 
     //Make an HTTP request to the given URL and return a String as the response.
-    private static String makeHttpRequest(URL url) throws IOException {
+    public static String makeHttpRequest(URL url) throws IOException {
 
         String jsonResponse = "";
 
@@ -97,7 +98,6 @@ public class Utils {
         }
         return output.toString();
     }
-
     /**
      * end helper methods
      **/

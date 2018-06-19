@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
+import java.net.URL;
 import java.util.List;
 
 public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
@@ -11,10 +12,12 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
 
     // Query URL
     private String mUrl;
+    private String mUrlTop;
 
-    public MoviesLoader(Context context, String url) {
+    public MoviesLoader(Context context, String url, String urlTop) {
         super(context);
         mUrl = url;
+        mUrlTop = urlTop;
     }
 
     @Override
@@ -24,12 +27,40 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
 
     @Override
     public List<Movies> loadInBackground() {
-        if (mUrl == null) {
-            return null;
-        }
 
-        // Perform the network request, parse the response, and extract a list of movies.
-        List<Movies> movies = Utils.fetchMovieData(mUrl);
-        return movies;
+        String preferredSortOrder = MoviesPreferences.getPreferredSortOrder(getContext());
+
+        if (preferredSortOrder = keyForHighestRated) {
+
+            try {
+
+                List<Movies> movies = Utils.fetchMovieData(mUrlTop);
+
+                if (mUrlTop == null) {
+                    return null;
+                }
+
+                return movies;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        } else {
+
+            try {
+
+                List<Movies> movies = Utils.fetchMovieData(mUrl);
+
+                if (mUrl == null) {
+                    return null;
+                }
+
+                return movies;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 }
