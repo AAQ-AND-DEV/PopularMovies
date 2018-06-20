@@ -1,9 +1,32 @@
 <resources>
+
+    <!-- name -->
     <string name="app_name">Movies</string>
+
+    <!-- empty state value -->
     <string name="no_movies">No movies available!</string>
+
+    <!-- used by MovieDetailsActivity -->
     <string name="released">Released: </string>
     <string name="rating">Viewer rating: </string>
 
-    <string name="highest_rated">Highest Rated</string>
-    <string name="most_popular">Most Popular </string>
+    <!-- settings menu option -->
+    <string name="action_settings">Settings</string>
+
+    <!-- - - - - - - - - - - -->
+    <!--Used by SharedPreferences-->
+    <!-- - - - - - - - - - - -->
+
+    <!-- labels for ListPreferences -->
+    <string name="pref_sort_order">Sort Order</string>
+    <string name="pref_label_most_popular">Most Popular</string>
+    <string name="pref_label_highest_rated">Highest Rated</string>
+
+    <!-- key name for sort preference in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_key" translatable="false">sortOrder</string>
+    <!-- value in SharedPreferences for most popular option-->
+    <string name="pref_most_popular_url" translatable="false">popular</string>
+    <!-- value in SharedPreferences for highest rated option [CHAR LIMIT=NONE] -->
+    <string name="pref_highest_rated_url" translatable="false">top_rated</string>
+
 </resources>
