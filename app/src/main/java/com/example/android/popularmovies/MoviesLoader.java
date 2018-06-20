@@ -30,7 +30,7 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
 
         String preferredSortOrder = MoviesPreferences.getPreferredSortOrder(getContext());
 
-        if (preferredSortOrder = keyForHighestRated) {
+        if (preferredSortOrder =) {
 
             try {
 
