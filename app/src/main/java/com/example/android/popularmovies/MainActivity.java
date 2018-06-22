@@ -1,6 +1,5 @@
 package com.example.android.popularmovies;
 
-import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +8,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
@@ -40,10 +38,10 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     // URL to query the movie database
     private static final String MOVIE_MOST_POPULAR_URL =
-            "[redacted]";
+            "https://api.themoviedb.org/3/movie/popular?&api_key=36bfad9d0ba02dad9b3c2c167b27d286";
 
     private static final String MOVIE_HIGH_RATED_URL =
-            "[redacted]";
+            "https://api.themoviedb.org/3/movie/top_rated?&api_key=36bfad9d0ba02dad9b3c2c167b27d286";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
             // Get a reference to the LoaderManager, in order to interact with loaders.
-            LoaderManager loaderManager = getLoaderManager();
+            android.support.v4.app.LoaderManager loaderManager = getSupportLoaderManager();
 
             loaderManager.initLoader(MOVIE_LOADER_ID, null, this);
             mEmptyView.setVisibility(View.GONE);
