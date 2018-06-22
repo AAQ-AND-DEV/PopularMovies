@@ -1,14 +1,15 @@
 package com.example.android.popularmovies;
 
-import android.app.LoaderManager;
-import android.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<Movies>>, MoviesAdapter.ListItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -76,10 +78,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         if (networkInfo != null && networkInfo.isConnected()) {
             // Get a reference to the LoaderManager, in order to interact with loaders.
             LoaderManager loaderManager = getLoaderManager();
-            // Initialize the loader. Pass in the int ID constant defined above and pass in null for
-            // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
-            // because this activity implements the LoaderCallbacks interface).
-            //loaderManager.initLoader(MOVIE_LOADER_0, null, this);
+
             loaderManager.initLoader(MOVIE_LOADER_ID, null, this);
             mEmptyView.setVisibility(View.GONE);
         } else {
@@ -120,15 +119,14 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     }
 
     @Override
-    public Loader<List<Movies>> onCreateLoader(int id, Bundle bundle) {
+    public android.support.v4.content.Loader<List<Movies>> onCreateLoader(int id, Bundle bundle) {
 
         MoviesLoader movies = new MoviesLoader(this, MOVIE_MOST_POPULAR_URL, MOVIE_HIGH_RATED_URL);
         return movies;
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Movies>> loader, List<Movies> movies) {
-
+    public void onLoadFinished(@NonNull android.support.v4.content.Loader<List<Movies>> loader, List<Movies> movies) {
         // Hide loading indicator because the data has been loaded
         View loadingIndicator = findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
@@ -146,13 +144,18 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     }
 
     @Override
+    public void onLoaderReset(@NonNull android.support.v4.content.Loader<List<Movies>> loader) {
+        mMoviesList.clear();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         // If the preferences for sort order have changed since the user was last in MainActivity,
         // perform a new query and set the flag to false
         if (PREFERENCES_HAVE_BEEN_UPDATED) {
             Log.d(LOG_TAG, "onStart: preferences were updated");
-            getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, myLoaderCallbacks);
+            getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
             PREFERENCES_HAVE_BEEN_UPDATED = false;
         }
     }
@@ -162,11 +165,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         super.onDestroy();
         // Unregister MainActivity as an OnPreferenceChangedListener to avoid any memory leaks.
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Movies>> loader) {
-        mMoviesList.clear();
     }
 
     @Override

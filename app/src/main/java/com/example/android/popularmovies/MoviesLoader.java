@@ -1,9 +1,8 @@
 package com.example.android.popularmovies;
 
-import android.content.AsyncTaskLoader;
+import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 
-import java.net.URL;
 import java.util.List;
 
 public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
@@ -11,13 +10,14 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
     private static final String LOG_TAG = MoviesLoader.class.getName();
 
     // Query URL
+    private String mUrlTopRated;
     private String mUrl;
-    private String mUrlTop;
 
-    public MoviesLoader(Context context, String url, String urlTop) {
+
+    public MoviesLoader(Context context, String urlTopRated, String url) {
         super(context);
+        mUrlTopRated = urlTopRated;
         mUrl = url;
-        mUrlTop = urlTop;
     }
 
     @Override
@@ -30,37 +30,52 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
 
         String preferredSortOrder = MoviesPreferences.getPreferredSortOrder(getContext());
 
-        if (preferredSortOrder =) {
+        switch (preferredSortOrder) {
 
-            try {
+            case "popular":
+                try {
 
-                List<Movies> movies = Utils.fetchMovieData(mUrlTop);
+                    List<Movies> movies = Utils.fetchMovieData(mUrl);
 
-                if (mUrlTop == null) {
+                    if (mUrl == null) {
+                        return null;
+                    }
+
+                    return movies;
+                } catch (Exception e) {
+                    e.printStackTrace();
                     return null;
                 }
 
-                return movies;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+            case "top_rated":
+                try {
 
-        } else {
+                    List<Movies> movies = Utils.fetchMovieData(mUrlTopRated);
 
-            try {
+                    if (mUrlTopRated == null) {
+                        return null;
+                    }
 
-                List<Movies> movies = Utils.fetchMovieData(mUrl);
-
-                if (mUrl == null) {
+                    return movies;
+                } catch (Exception e) {
+                    e.printStackTrace();
                     return null;
                 }
 
-                return movies;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+            default:
+                try {
+
+                    List<Movies> movies = Utils.fetchMovieData(mUrl);
+
+                    if (mUrl == null) {
+                        return null;
+                    }
+
+                    return movies;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
         }
     }
 }

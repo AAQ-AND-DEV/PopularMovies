@@ -11,8 +11,9 @@ public class MoviesPreferences {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String keyForMostPopular = context.getString(R.string.pref_most_popular_url);
-        String keyForHighestRated = context.getString(R.string.pref_highest_rated_url);
+        String keyForHighestRated = context.getString(R.string.pref_highest_rated_key);
+
+        String keyForMostPopular = context.getString(R.string.pref_most_popular_key);
 
         return prefs.getString(keyForMostPopular, keyForHighestRated);
     }
