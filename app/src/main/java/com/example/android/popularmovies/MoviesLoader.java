@@ -32,12 +32,12 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
 
         switch (preferredSortOrder) {
 
-            case "popular":
+            case "top_rated":
                 try {
 
-                    List<Movies> movies = Utils.fetchMovieData(mUrl);
+                    List<Movies> movies = Utils.fetchMovieData(mUrlTopRated);
 
-                    if (mUrl == null) {
+                    if (mUrlTopRated == null) {
                         return null;
                     }
 
@@ -47,12 +47,12 @@ public class MoviesLoader extends AsyncTaskLoader<List<Movies>> {
                     return null;
                 }
 
-            case "top_rated":
+            case "popular":
                 try {
 
-                    List<Movies> movies = Utils.fetchMovieData(mUrlTopRated);
+                    List<Movies> movies = Utils.fetchMovieData(mUrl);
 
-                    if (mUrlTopRated == null) {
+                    if (mUrl == null) {
                         return null;
                     }
 

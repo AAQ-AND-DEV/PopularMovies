@@ -27,6 +27,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
     }
 
+    // show a summary of the selected preference
     // find the label of the value and set the summary to the label
     private void setPreferenceSummary(Preference preference, String value) {
         if (preference instanceof ListPreference) {
@@ -42,22 +43,22 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference preference = findPreference(key);
         if (null != preference) {
-            String value = sharedPreferences.getString(preference.getKey(), "");
-            setPreferenceSummary(preference, value);
+            setPreferenceSummary(preference, sharedPreferences.getString(key, ""));
         }
     }
 
 
     // register and unregister with onCreate and onDestroy
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+    public void onStop() {
+        super.onStop();
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    public void onStart() {
+        super.onStart();
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
+
 }
